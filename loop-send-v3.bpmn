@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0svsrni" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:process id="sendRefCheckEmail3" name="Send Each Reference Check Email" isExecutable="true">
+    <bpmn:startEvent id="startProc" name="Start Send Ref Check Email">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="refemail1" label="Referee 1 email" type="string" />
+          <camunda:formField id="reftext1" label="Refree 1 Text" type="string" />
+          <camunda:formField id="refemail2" label="Refree email 2" type="string" />
+          <camunda:formField id="reftext2" label="Refree Text 2" type="string" />
+          <camunda:formField id="refemail3" label="Reference email 3" type="string" />
+          <camunda:formField id="reftext3" label="Reference Text 3" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1eq24h2</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="complete" name="Send Emails Complete">
+      <bpmn:incoming>Flow_0aaxlgb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1eq24h2" sourceRef="startProc" targetRef="collectEmail" />
+    <bpmn:sequenceFlow id="Flow_0wkxuhc" sourceRef="collectEmail" targetRef="sendEmailProcess" />
+    <bpmn:userTask id="collectEmail" name="Collect Ref Check Emails">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript">var REFEREES = {"emails": [ {
+   "to": execution.getVariable("refemail1"),
+   "body": execution.getVariable("reftext1")
+  },
+  {
+   "to": execution.getVariable("refemail2"),
+   "body": execution.getVariable("reftext2")
+  },
+  {
+   "to": execution.getVariable("refemail3"),
+   "body":execution.getVariable("reftext3")
+  }
+]
+};
+
+execution.setVariable("referees", JSON.stringify(REFEREES));
+execution.setVariable("counter", 0);</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1eq24h2</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wkxuhc</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0aaxlgb" sourceRef="check" targetRef="complete" />
+    <bpmn:userTask id="check" name="Check (Debug)">
+      <bpmn:incoming>Flow_0sfympg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0aaxlgb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:subProcess id="sendEmailProcess" name="sendEmailProcess">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript">/* Just to trace the process exeuction*/
+execution.setVariable("counter", execution.getVariable("counter") + 1 );</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0wkxuhc</bpmn:incoming>
+      <bpmn:outgoing>Flow_0sfympg</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${S(referees).prop(&#34;emails&#34;).elements()}" camunda:elementVariable="email" />
+      <bpmn:startEvent id="Event_0lywym5">
+        <bpmn:outgoing>Flow_0ayefx8</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_0ayefx8" sourceRef="Event_0lywym5" targetRef="sendEmailProcess_send" />
+      <bpmn:serviceTask id="sendEmailProcess_send" name="Send each Reference Check Email">
+        <bpmn:extensionElements>
+          <camunda:executionListener event="start">
+            <camunda:script scriptFormat="javascript">execution.setVariable('new_email', S(execution.getVariable('email')).prop('to').value());
+execution.setVariable('new_text', S(execution.getVariable('email')).prop('body').value());</camunda:script>
+          </camunda:executionListener>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="text">S(execution.getVariable("email")).prop("body").value()</camunda:inputParameter>
+              <camunda:inputParameter name="subject">Reference Check</camunda:inputParameter>
+              <camunda:inputParameter name="to">S(execution.getVariable("email")).prop("to").value()</camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>mail-send</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0ayefx8</bpmn:incoming>
+      </bpmn:serviceTask>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_0sfympg" sourceRef="sendEmailProcess" targetRef="check" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sendRefCheckEmail3">
+      <bpmndi:BPMNEdge id="Flow_0aaxlgb_di" bpmnElement="Flow_0aaxlgb">
+        <di:waypoint x="860" y="150" />
+        <di:waypoint x="922" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wkxuhc_di" bpmnElement="Flow_0wkxuhc">
+        <di:waypoint x="390" y="150" />
+        <di:waypoint x="430" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1eq24h2_di" bpmnElement="Flow_1eq24h2">
+        <di:waypoint x="208" y="150" />
+        <di:waypoint x="290" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sfympg_di" bpmnElement="Flow_0sfympg">
+        <di:waypoint x="720" y="150" />
+        <di:waypoint x="760" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1pu4qqo_di" bpmnElement="check">
+        <dc:Bounds x="760" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00byplu_di" bpmnElement="complete">
+        <dc:Bounds x="922" y="132" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="909" y="175" width="63" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xdp61w_di" bpmnElement="collectEmail">
+        <dc:Bounds x="290" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="startProc">
+        <dc:Bounds x="172" y="132" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="153" y="175" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yi6rdl_di" bpmnElement="sendEmailProcess" isExpanded="true">
+        <dc:Bounds x="430" y="70" width="290" height="180" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0ayefx8_di" bpmnElement="Flow_0ayefx8">
+        <di:waypoint x="506" y="170" />
+        <di:waypoint x="555" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0lywym5_di" bpmnElement="Event_0lywym5">
+        <dc:Bounds x="470" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12xc6yi_di" bpmnElement="sendEmailProcess_send">
+        <dc:Bounds x="555" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

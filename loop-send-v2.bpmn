@@ -40,8 +40,7 @@
 
 execution.setVariable("referees", JSON.stringify(REFEREES));
 execution.setVariable("allEmails", "");
-execution.setVariable("counter", 0);
-</camunda:script>
+execution.setVariable("counter", 0);</camunda:script>
         </camunda:executionListener>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1eq24h2</bpmn:incoming>
@@ -71,6 +70,10 @@ execution.setVariable("counter", execution.getVariable("counter") + 1 );</camund
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sendRefCheckEmail2">
+      <bpmndi:BPMNEdge id="Flow_0aaxlgb_di" bpmnElement="Flow_0aaxlgb">
+        <di:waypoint x="740" y="117" />
+        <di:waypoint x="772" y="117" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1nuztb8_di" bpmnElement="Flow_1nuztb8">
         <di:waypoint x="570" y="117" />
         <di:waypoint x="640" y="117" />
@@ -83,14 +86,16 @@ execution.setVariable("counter", execution.getVariable("counter") + 1 );</camund
         <di:waypoint x="215" y="117" />
         <di:waypoint x="280" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0aaxlgb_di" bpmnElement="Flow_0aaxlgb">
-        <di:waypoint x="740" y="117" />
-        <di:waypoint x="772" y="117" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="startProc">
         <dc:Bounds x="179" y="99" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="160" y="142" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00byplu_di" bpmnElement="complete">
+        <dc:Bounds x="772" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="759" y="142" width="63" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1xdp61w_di" bpmnElement="collectEmail">
@@ -98,12 +103,6 @@ execution.setVariable("counter", execution.getVariable("counter") + 1 );</camund
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1owm47v_di" bpmnElement="sendEmail">
         <dc:Bounds x="470" y="77" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_00byplu_di" bpmnElement="complete">
-        <dc:Bounds x="772" y="99" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="759" y="142" width="63" height="27" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1pu4qqo_di" bpmnElement="check">
         <dc:Bounds x="640" y="77" width="100" height="80" />
